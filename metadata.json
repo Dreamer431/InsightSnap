@@ -1,0 +1,5 @@
+{
+  "name": "InsightSnap - Micro-Course Generator",
+  "description": "Generate instant micro-courses with interactive quizzes using Gemini AI.",
+  "requestFramePermissions": []
+}

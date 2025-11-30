@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>InsightSnap - 即时微课生成器</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', '"PingFang SC"', '"Microsoft YaHei"', '"Heiti SC"', 'sans-serif'],
+            serif: ['"Noto Serif SC"', '"Songti SC"', '"SimSun"', 'serif'],
+          },
+          colors: {
+            border: 'var(--border)',
+            background: 'var(--background)',
+            foreground: 'var(--foreground)',
+            primary: {
+              DEFAULT: '#6366f1', // Indigo
+              foreground: '#ffffff',
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              200: '#c7d2fe',
+              300: '#a5b4fc',
+              400: '#818cf8',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+              800: '#3730a3',
+              900: '#312e81',
+            },
+            zinc: {
+              850: '#1f1f22',
+              900: '#18181b',
+              950: '#09090b',
+            }
+          },
+          animation: {
+            'float': 'float 8s ease-in-out infinite',
+            'slide-in': 'slideIn 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
+            'slide-up': 'slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1)',
+            'fade-in': 'fadeIn 0.5s ease-out',
+            'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+          },
+          keyframes: {
+            float: {
+              '0%, 100%': { transform: 'translateY(0)' },
+              '50%': { transform: 'translateY(-12px)' },
+            },
+            slideIn: {
+              '0%': { opacity: '0', transform: 'translateX(-30px)' },
+              '100%': { opacity: '1', transform: 'translateX(0)' },
+            },
+            slideUp: {
+              '0%': { opacity: '0', transform: 'translateY(30px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' },
+            },
+            fadeIn: {
+              '0%': { opacity: '0' },
+              '100%': { opacity: '1' },
+            }
+          },
+          backdropBlur: {
+            xs: '2px',
+          }
+        },
+      },
+    }
+  </script>
+  <style>
+    :root {
+      --background: #fdfdfd;
+      /* Off-white for warmth */
+      --foreground: #18181b;
+      --border: #e4e4e7;
+    }
+
+    .dark {
+      --foreground: #fafafa;
+      --border: #27272a;
+    }
+
+    body {
+      /* background-color: var(--background); Removed to allow gradient */
+      color: var(--foreground);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #d4d4d8;
+      border-radius: 99px;
+    }
+
+    .dark ::-webkit-scrollbar-thumb {
+      background: #3f3f46;
+    }
+
+    /* Glass Utility for easy reuse */
+    .glass-panel {
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+    }
+
+    .dark .glass-panel {
+      background: rgba(20, 20, 23, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    /* Shimmer Animation for Image Loading */
+    @keyframes shimmer {
+      0% {
+        background-position: -200% 0;
+      }
+
+      100% {
+        background-position: 200% 0;
+      }
+    }
+  </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.30.0"
+  }
+}
+</script>
+  <link rel="stylesheet" href="/index.css">
+</head>
+
+<body
+  class="transition-colors duration-500 selection:bg-primary-500/30 bg-gradient-to-br from-blue-50 via-indigo-50 to-blue-100 dark:from-slate-950 dark:via-blue-950 dark:to-slate-900 min-h-screen">
+  <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+
+</html>
