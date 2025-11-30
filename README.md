@@ -18,7 +18,9 @@
   
 ### 📹 产品演示
 
-https://github.com/user-attachments/assets/InsightSnapDemo.mp4
+
+https://github.com/user-attachments/assets/3700ca84-8206-42c5-82a2-16a4c64cd94d
+
 
 *观看 InsightSnap 如何在一分钟内将主题转化为精美的学习卡片*
 
