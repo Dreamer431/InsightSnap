@@ -12,7 +12,7 @@
 [![Gemini AI](https://img.shields.io/badge/Gemini-AI-8E75B2?style=flat&logo=google)](https://ai.google.dev/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](./LICENSE)
 
-[在线演示](https://your-demo-url.vercel.app) · [功能特性](#✨-功能特性) · [快速开始](#🚀-快速开始) · [部署](#📦-部署)
+[在线演示](https://course-generator-rust.vercel.app/) · [功能特性](#✨-功能特性) · [快速开始](#🚀-快速开始) · [部署](#📦-部署)
 
 <div align="center">
   
