@@ -14,9 +14,15 @@
 
 [在线演示](https://your-demo-url.vercel.app) · [功能特性](#✨-功能特性) · [快速开始](#🚀-快速开始) · [部署](#📦-部署)
 
-https://github.com/user-attachments/assets/your-video-id.mp4
+<div align="center">
+  
+### 📹 产品演示
 
-> **演示视频**: 查看 InsightSnap 如何将主题转化为精美的学习卡片
+https://github.com/user-attachments/assets/InsightSnapDemo.mp4
+
+*观看 InsightSnap 如何在一分钟内将主题转化为精美的学习卡片*
+
+</div>
 
 </div>
 
