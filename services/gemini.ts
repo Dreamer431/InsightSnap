@@ -1,5 +1,6 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { MicroCourse } from "../types";
+import type { Language } from "../i18n";
 
 // Get API key from environment variables
 const getApiKey = (): string => {
@@ -7,25 +8,23 @@ const getApiKey = (): string => {
 
   if (!apiKey) {
     throw new Error(
-      "❌ Gemini API Key 未设置！\n\n" +
-      "请按照以下步骤配置：\n" +
-      "1. 复制 .env.example 为 .env.local\n" +
-      "2. 在 .env.local 中设置: GEMINI_API_KEY=你的密钥\n" +
-      "3. 重启开发服务器\n\n" +
-      "获取 API Key: https://aistudio.google.com/apikey"
+      "❌ Gemini API Key not set!\n\n" +
+      "Please follow these steps:\n" +
+      "1. Copy .env.example to .env.local\n" +
+      "2. Set in .env.local: GEMINI_API_KEY=your_key\n" +
+      "3. Restart the dev server\n\n" +
+      "Get API Key: https://aistudio.google.com/apikey"
     );
   }
 
   return apiKey;
 };
 
-const generateMicroCourse = async (topic: string): Promise<MicroCourse> => {
-  const apiKey = getApiKey();
-
-  const ai = new GoogleGenAI({ apiKey });
-
-  const prompt = `
-    创建一个关于主题 "${topic}" 的“微型课程”。
+// Prompt templates for different languages
+const getPromptTemplate = (topic: string, language: Language): string => {
+  if (language === 'zh-CN') {
+    return `
+    创建一个关于主题 "${topic}" 的"微型课程"。
     目标受众是中文初学者。
     
     你需要生成 JSON 数据，包含：
@@ -43,6 +42,35 @@ const generateMicroCourse = async (topic: string): Promise<MicroCourse> => {
        
     请确保语言生动有趣，富有教育意义，严格使用中文。
   `;
+  } else {
+    return `
+    Create a "micro-course" about the topic "${topic}".
+    Target audience is English-speaking beginners.
+    
+    Generate JSON data containing:
+    1. 3 knowledge cards (cards), each containing:
+       - title: Card title (English, concise, max 4 words)
+       - emoji: A relevant emoji
+       - content: Core knowledge explanation (English, 30-45 words, concise and insightful)
+       - keyword: A specific visual keyword for searching high-quality minimalist photography backgrounds (e.g. "abstract architecture", "minimalist landscape", "technology details"). Avoid abstract concept words.
+    
+    2. 1 interactive quiz (quiz), containing:
+       - question: A multiple choice question about the content (English, concise)
+       - options: 4 options (English, each option max 8 words)
+       - correctIndex: Index of the correct option (0-3)
+       - explanation: Answer explanation (English, one short sentence)
+       
+    Ensure the language is engaging, educational, and strictly in English. Keep all text concise for mobile display.
+  `;
+  }
+};
+
+const generateMicroCourse = async (topic: string, language: Language = 'zh-CN'): Promise<MicroCourse> => {
+  const apiKey = getApiKey();
+
+  const ai = new GoogleGenAI({ apiKey });
+
+  const prompt = getPromptTemplate(topic, language);
 
   const response = await ai.models.generateContent({
     model: "gemini-2.5-flash",
@@ -98,17 +126,24 @@ const generateMicroCourse = async (topic: string): Promise<MicroCourse> => {
   }
 };
 
-const generateMindMapImage = async (topic: string): Promise<string> => {
+const generateMindMapImage = async (topic: string, language: Language = 'zh-CN'): Promise<string> => {
   const apiKey = getApiKey();
   const ai = new GoogleGenAI({ apiKey });
+
+  const promptText = language === 'zh-CN'
+    ? `Design a clean, professional, and colorful mind map infographic summarizing the topic: "${topic}". 
+       Visual style: Modern vector illustration, high resolution, white background, organized structure with icons and nodes. 
+       Make it visually appealing for a learning summary.
+       Important: The overall aesthetic should be suitable for a Chinese audience, modern and minimalist.`
+    : `Design a clean, professional, and colorful mind map infographic summarizing the topic: "${topic}". 
+       Visual style: Modern vector illustration, high resolution, white background, organized structure with icons and nodes. 
+       Make it visually appealing for a learning summary.
+       Important: Use English text, modern and minimalist aesthetic.`;
 
   // Use Gemini 3 Pro Image for high quality generation
   const response = await ai.models.generateContent({
     model: 'gemini-3-pro-image-preview',
-    contents: `Design a clean, professional, and colorful mind map infographic summarizing the topic: "${topic}". 
-               Visual style: Modern vector illustration, high resolution, white background, organized structure with icons and nodes. 
-               Make it visually appealing for a learning summary.
-               Important: The overall aesthetic should be suitable for a Chinese audience, modern and minimalist.`,
+    contents: promptText,
     config: {
       responseModalities: ["IMAGE"], // 明确指定返回图像
       imageConfig: {

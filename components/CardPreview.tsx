@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { CourseCard } from '../types';
+import { useI18n } from '../i18n';
 
 interface CardPreviewProps {
   card: CourseCard;
@@ -9,6 +10,7 @@ interface CardPreviewProps {
 }
 
 const CardPreview: React.FC<CardPreviewProps> = ({ card, index, isActive }) => {
+  const { t, language } = useI18n();
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
   const imgRef = useRef<HTMLImageElement>(null);
@@ -46,6 +48,9 @@ const CardPreview: React.FC<CardPreviewProps> = ({ card, index, isActive }) => {
     return () => clearTimeout(loadTimeout);
   }, [bgImage, isActive, imageLoaded]);
 
+  // Format chapter number
+  const chapterText = t.chapter.replace('{n}', String(index + 1).padStart(2, '0'));
+
   return (
     <div
       className={`absolute inset-0 w-full h-full transition-all duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] 
@@ -72,7 +77,7 @@ const CardPreview: React.FC<CardPreviewProps> = ({ card, index, isActive }) => {
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="flex flex-col items-center gap-3 text-zinc-400 dark:text-zinc-500">
                   <div className="w-8 h-8 border-2 border-zinc-300 dark:border-zinc-700 border-t-primary-500 rounded-full animate-spin" />
-                  <span className="text-xs font-medium tracking-wider">加载中...</span>
+                  <span className="text-xs font-medium tracking-wider">{t.loading}</span>
                 </div>
               </div>
             )}
@@ -106,8 +111,8 @@ const CardPreview: React.FC<CardPreviewProps> = ({ card, index, isActive }) => {
           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent hidden dark:block" />
         </div>
 
-        {/* Content Layer */}
-        <div className="relative z-10 flex-1 p-10 flex flex-col justify-between pb-36">
+        {/* Content Layer - Scrollable */}
+        <div className="relative z-10 flex-1 p-6 md:p-10 flex flex-col pb-28 md:pb-36 overflow-y-auto custom-scrollbar">
 
           {/* Top Bar: Chapter Indicator */}
           <div className="flex justify-between items-start pt-4">
@@ -115,36 +120,36 @@ const CardPreview: React.FC<CardPreviewProps> = ({ card, index, isActive }) => {
                 bg-white/40 dark:bg-white/5 
                 backdrop-blur-xl border border-white/20 dark:border-white/10 shadow-sm">
               <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-zinc-800 dark:text-white/80">
-                第 0{index + 1} 章
+                {chapterText}
               </span>
             </div>
           </div>
 
           {/* Main Content */}
-          <div className="space-y-6">
+          <div className="space-y-4 md:space-y-6">
             {/* Floating Glass Icon */}
-            <div className="w-16 h-16 rounded-2xl 
+            <div className="w-12 h-12 md:w-16 md:h-16 rounded-2xl 
                 bg-white/60 dark:bg-white/5 
                 backdrop-blur-md border border-white/40 dark:border-white/10 
-                flex items-center justify-center text-4xl 
+                flex items-center justify-center text-3xl md:text-4xl 
                 shadow-xl shadow-zinc-200/50 dark:shadow-black/20 
                 ring-1 ring-white/20 dark:ring-white/5">
               {card.emoji}
             </div>
 
-            <div className="space-y-5">
+            <div className="space-y-2 md:space-y-5">
               {/* Serif Title */}
-              <h2 className="text-4xl md:text-5xl font-serif font-bold 
+              <h2 className="text-xl md:text-4xl lg:text-5xl font-serif font-bold 
                   text-zinc-900 dark:text-white 
-                  leading-[1.1] tracking-tight drop-shadow-sm dark:drop-shadow-lg transition-colors duration-500">
+                  leading-[1.2] tracking-tight drop-shadow-sm dark:drop-shadow-lg transition-colors duration-500">
                 {card.title}
               </h2>
 
               {/* Divider */}
-              <div className="w-14 h-1 bg-primary-500 rounded-full opacity-80" />
+              <div className="w-8 md:w-14 h-0.5 md:h-1 bg-primary-500 rounded-full opacity-80" />
 
               {/* Sans-serif Body */}
-              <p className="text-base md:text-lg font-sans font-light leading-relaxed tracking-wide 
+              <p className="text-xs md:text-base lg:text-lg font-sans font-light leading-relaxed tracking-wide 
                   text-zinc-600 dark:text-zinc-200 
                   drop-shadow-sm dark:drop-shadow-md opacity-90 transition-colors duration-500">
                 {card.content}

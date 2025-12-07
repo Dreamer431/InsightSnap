@@ -12,6 +12,8 @@
 [![Gemini AI](https://img.shields.io/badge/Gemini-AI-8E75B2?style=flat&logo=google)](https://ai.google.dev/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](./LICENSE)
 
+中文 | [English](./README.en.md)
+
 [在线演示](https://course-generator-rust.vercel.app/) · [功能特性](#✨-功能特性) · [快速开始](#🚀-快速开始) · [部署](#📦-部署)
 
 <div align="center">
@@ -43,6 +45,9 @@ https://github.com/user-attachments/assets/3700ca84-8206-42c5-82a2-16a4c64cd94d
 
 🌓 **深色/浅色主题**  
 支持主题切换，适应不同环境的使用需求
+
+🌐 **多语言支持**  
+支持中英文切换，一键切换界面和生成内容语言
 
 🧠 **思维导图**  
 自动生成知识点思维导图，帮助建立知识体系
@@ -172,6 +177,10 @@ insightsnap/
 ├── components/          # React 组件
 │   ├── CardPreview.tsx  # 卡片预览组件
 │   └── QuizPreview.tsx  # 测验组件
+├── i18n/                # 国际化
+│   ├── index.ts         # i18n 上下文和 Hook
+│   ├── en.ts            # 英文翻译
+│   └── zh-CN.ts         # 中文翻译
 ├── services/            # 服务层
 │   └── gemini.ts        # Gemini API 集成
 ├── types.ts             # TypeScript 类型定义

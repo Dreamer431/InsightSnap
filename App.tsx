@@ -3,6 +3,7 @@ import { generateMicroCourse, generateMindMapImage } from './services/gemini';
 import { MicroCourse, LoadingState } from './types';
 import CardPreview from './components/CardPreview';
 import QuizPreview from './components/QuizPreview';
+import { useI18n, type Language } from './i18n';
 
 // --- Icons ---
 const SparklesIcon = () => (
@@ -26,6 +27,9 @@ const HistoryIcon = () => (
 const XIcon = () => (
   <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
 );
+const LanguageIcon = () => (
+  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><path d="M2 12h20" /><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" /></svg>
+);
 
 // --- Components ---
 
@@ -42,6 +46,8 @@ const LoadingStep = ({ text, active, completed }: { text: string; active: boolea
 );
 
 export default function App() {
+  const { language, t, toggleLanguage } = useI18n();
+
   const [topic, setTopic] = useState('');
   const [course, setCourse] = useState<MicroCourse | null>(null);
   const [loadingState, setLoadingState] = useState<LoadingState>(LoadingState.IDLE);
@@ -130,7 +136,7 @@ export default function App() {
     }, 1200);
 
     try {
-      const data = await generateMicroCourse(topic);
+      const data = await generateMicroCourse(topic, language);
       clearInterval(stepTimer);
       setLoadingStep(4);
 
@@ -146,7 +152,7 @@ export default function App() {
       clearInterval(stepTimer);
       console.error(err);
       setLoadingState(LoadingState.ERROR);
-      setErrorMsg("生成课程失败，请重试。");
+      setErrorMsg(t.generateError);
     }
   };
 
@@ -155,12 +161,12 @@ export default function App() {
 
     try {
       setIsGeneratingImage(true);
-      const imageUrl = await generateMindMapImage(course.topic);
+      const imageUrl = await generateMindMapImage(course.topic, language);
 
       setCourse(prev => prev ? { ...prev, mindMapImage: imageUrl } : null);
     } catch (err) {
       console.error("Image generation failed", err);
-      alert("思维导图生成失败，请检查 API Key 权限。");
+      alert(t.mindMapError);
     } finally {
       setIsGeneratingImage(false);
     }
@@ -197,14 +203,24 @@ export default function App() {
             <div className="w-8 h-8 rounded-lg bg-zinc-900 dark:bg-white text-white dark:text-black flex items-center justify-center shadow-lg shadow-blue-500/20">
               <SparklesIcon />
             </div>
-            <span className="font-serif font-bold tracking-tight text-xl text-foreground">InsightSnap</span>
+            <span className="font-serif font-bold tracking-tight text-xl text-foreground">{t.appName}</span>
           </div>
-          <button
-            onClick={toggleTheme}
-            className="p-2.5 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors text-zinc-500 dark:text-zinc-300"
-          >
-            {isDark ? <SunIcon /> : <MoonIcon />}
-          </button>
+          <div className="flex items-center gap-1">
+            <button
+              onClick={toggleLanguage}
+              className="p-2.5 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors text-zinc-500 dark:text-zinc-300 flex items-center gap-1.5"
+              title={language === 'zh-CN' ? 'Switch to English' : '切换到中文'}
+            >
+              <LanguageIcon />
+              <span className="text-xs font-medium">{language === 'zh-CN' ? 'EN' : '中'}</span>
+            </button>
+            <button
+              onClick={toggleTheme}
+              className="p-2.5 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors text-zinc-500 dark:text-zinc-300"
+            >
+              {isDark ? <SunIcon /> : <MoonIcon />}
+            </button>
+          </div>
         </header>
 
         {/* Scrollable Content */}
@@ -214,15 +230,15 @@ export default function App() {
             {/* Hero Section */}
             <div className="space-y-6 animate-slide-in">
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-medium tracking-tight leading-[1.15]">
-                以极简主义<br />
+                {t.heroTitle1}<br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-indigo-500 to-blue-600 dark:from-blue-400 dark:via-indigo-300 dark:to-blue-400">
-                  重塑微学习
+                  {t.heroTitle2}
                 </span>
               </h1>
               <p className="text-zinc-600/80 dark:text-zinc-400/90 text-[17px] font-normal leading-[1.8] tracking-wide max-w-md">
-                一分钟，两次点击，三张卡 - 让复杂概念一目了然
+                {t.heroSubtitle}
                 <span className="block mt-3 text-[15px] font-light text-zinc-500/70 dark:text-zinc-500/80 tracking-wider">
-                  你的好奇，知识即现
+                  {t.heroTagline}
                 </span>
               </p>
             </div>
@@ -235,7 +251,7 @@ export default function App() {
                   type="text"
                   value={topic}
                   onChange={(e) => setTopic(e.target.value)}
-                  placeholder="探索什么？(例如：博弈论、摄影构图)"
+                  placeholder={t.inputPlaceholder}
                   className="block w-full bg-white/50 dark:bg-black/20 text-foreground border border-black/5 dark:border-white/10 rounded-2xl px-6 py-5 text-lg shadow-sm backdrop-blur-sm placeholder:text-zinc-400 focus:outline-none focus:border-blue-500/50 focus:ring-4 focus:ring-blue-500/10 transition-all"
                   disabled={loadingState === LoadingState.LOADING}
                 />
@@ -256,13 +272,13 @@ export default function App() {
 
               {/* Tags */}
               <div className="flex flex-wrap gap-2.5">
-                {['斯多葛哲学', '红酒品鉴', 'Web3 入门', '极简生活'].map(t => (
+                {t.tags.map(tag => (
                   <button
-                    key={t}
-                    onClick={() => setTopic(t)}
+                    key={tag}
+                    onClick={() => setTopic(tag)}
                     className="px-4 py-2 text-xs font-medium text-zinc-600 dark:text-zinc-300 bg-white/50 dark:bg-white/5 border border-black/5 dark:border-white/10 rounded-full hover:border-blue-400 dark:hover:border-blue-400 hover:text-blue-600 dark:hover:text-blue-300 transition-all backdrop-blur-sm"
                   >
-                    {t}
+                    {tag}
                   </button>
                 ))}
               </div>
@@ -270,9 +286,9 @@ export default function App() {
               {/* Loading Status */}
               {loadingState === LoadingState.LOADING && (
                 <div className="py-8 space-y-4 border-t border-black/5 dark:border-white/5">
-                  <LoadingStep text="构建知识架构..." active={loadingStep >= 1} completed={loadingStep > 1} />
-                  <LoadingStep text="萃取核心概念..." active={loadingStep >= 2} completed={loadingStep > 2} />
-                  <LoadingStep text="设计交互体验..." active={loadingStep >= 3} completed={loadingStep > 3} />
+                  <LoadingStep text={t.loadingStep1} active={loadingStep >= 1} completed={loadingStep > 1} />
+                  <LoadingStep text={t.loadingStep2} active={loadingStep >= 2} completed={loadingStep > 2} />
+                  <LoadingStep text={t.loadingStep3} active={loadingStep >= 3} completed={loadingStep > 3} />
                 </div>
               )}
 
@@ -289,7 +305,7 @@ export default function App() {
               <div className="animate-fade-in space-y-5 pt-8 border-t border-black/5 dark:border-white/5">
                 <h3 className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-[0.2em] flex items-center gap-2">
                   <HistoryIcon />
-                  最近探索
+                  {t.recentExplore}
                 </h3>
                 <div className="grid grid-cols-1 gap-2">
                   {history.map((h, i) => (
@@ -304,7 +320,7 @@ export default function App() {
                         </div>
                         <div className="flex flex-col">
                           <span className="font-serif font-medium text-foreground">{h.topic}</span>
-                          <span className="text-xs text-zinc-400 dark:text-zinc-500">3个知识点 • 1个测验</span>
+                          <span className="text-xs text-zinc-400 dark:text-zinc-500">3{t.knowledgePoints} • 1{t.quiz}</span>
                         </div>
                       </div>
                       <div className="opacity-0 group-hover:opacity-100 text-zinc-400 dark:text-zinc-300 -translate-x-2 group-hover:translate-x-0 transition-all">
@@ -435,9 +451,9 @@ export default function App() {
                   <div className="w-24 h-24 bg-gradient-to-br from-white to-zinc-200 dark:from-zinc-800 dark:to-zinc-900 rounded-[2rem] shadow-2xl flex items-center justify-center mb-8 text-5xl animate-float border border-white/50 dark:border-white/5 relative z-10">
                     💡
                   </div>
-                  <h3 className="font-serif font-bold text-zinc-900 dark:text-white text-2xl mb-3 relative z-10">灵感待命</h3>
+                  <h3 className="font-serif font-bold text-zinc-900 dark:text-white text-2xl mb-3 relative z-10">{t.emptyTitle}</h3>
                   <p className="text-zinc-500 dark:text-zinc-300 text-sm font-light leading-relaxed max-w-[200px] relative z-10">
-                    输入关键词<br />开启你的微型知识之旅
+                    {t.emptySubtitle1}<br />{t.emptySubtitle2}
                   </p>
                 </div>
               )}
