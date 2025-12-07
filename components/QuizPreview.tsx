@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Quiz } from '../types';
 import { useI18n } from '../i18n';
 
@@ -31,24 +32,28 @@ const QuizPreview: React.FC<QuizPreviewProps> = ({
 
     const isCorrect = selected === quiz.correctIndex;
 
+    // Lightbox Modal - rendered via portal to escape container constraints
+    const lightboxModal = isZoomed && mindMapImage && createPortal(
+        <div
+            className="fixed inset-0 z-[9999] bg-black/90 backdrop-blur-xl flex items-center justify-center p-4 md:p-10 cursor-zoom-out animate-fade-in"
+            onClick={() => setIsZoomed(false)}
+        >
+            <img
+                src={mindMapImage}
+                alt="Mind Map Fullscreen"
+                className="max-w-full max-h-full rounded-lg shadow-2xl animate-slide-up object-contain"
+            />
+            <div className="absolute bottom-10 px-6 py-3 bg-white/10 backdrop-blur-md rounded-full text-white text-sm border border-white/20">
+                {t.clickToClose}
+            </div>
+        </div>,
+        document.body
+    );
+
     return (
         <>
-            {/* Lightbox Modal for Mind Map */}
-            {isZoomed && mindMapImage && (
-                <div
-                    className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-xl flex items-center justify-center p-4 md:p-10 cursor-zoom-out animate-fade-in"
-                    onClick={() => setIsZoomed(false)}
-                >
-                    <img
-                        src={mindMapImage}
-                        alt="Mind Map Fullscreen"
-                        className="max-w-full max-h-full rounded-lg shadow-2xl animate-slide-up object-contain"
-                    />
-                    <div className="absolute bottom-10 px-6 py-3 bg-white/10 backdrop-blur-md rounded-full text-white text-sm border border-white/20">
-                        {t.clickToClose}
-                    </div>
-                </div>
-            )}
+            {/* Lightbox Modal rendered via portal */}
+            {lightboxModal}
 
             <div
                 className={`absolute inset-0 w-full h-full transition-all duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] 

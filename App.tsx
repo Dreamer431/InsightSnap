@@ -359,12 +359,12 @@ export default function App() {
         {/* Phone Device Mockup - Responsive */}
         <div className={`
           relative w-full h-full 
-          md:w-auto md:h-[92vh] md:max-h-[950px] md:aspect-[9/18]
+          md:w-auto md:h-[95vh] md:max-h-[1100px] md:aspect-[9/19]
           md:rounded-[3rem] 
           bg-zinc-900/5 dark:bg-white/5 backdrop-blur-md
           md:shadow-[0_0_0_1px_rgba(255,255,255,0.1),0_50px_100px_-20px_rgba(0,0,0,0.5)]
-          transition-all duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] origin-bottom
-          ${course ? 'translate-y-0 opacity-100 scale-100' : 'md:translate-y-8 opacity-100 md:opacity-90 md:scale-[0.98]'}
+          transition-all duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)]
+          ${course ? 'opacity-100 scale-100' : 'opacity-100 md:opacity-90 md:scale-[0.98]'}
         `}>
 
           {/* Physical Bezel (Desktop Only) */}
